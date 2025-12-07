@@ -1,0 +1,256 @@
+﻿
+@model InventorySystem.ViewModels.InventoryViewModel;
+
+@{
+    ViewData["Title"] = "Inventario de Productos";
+}
+
+<div class="container-fluid">
+    <h1 class="display-5 text-uppercase text-muted fw-bold mb-2 text-center">Dashboard de Inventario</h1>
+
+    <hr class="mb-4">
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+
+        <div class="col">
+            <div class="shadow-sm border border-2 rounded-1 border-primary p-2">
+                <div class="">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-seam  text-primary me-2"></i>
+                        <div>
+                            <p class="text-muted fw-bold text-uppercase mb-0">Total en Inventario</p>
+                            @* <p class="card-text fw-bold text-primary">1,250</p> *@
+                            <p class="card-text fw-bold text-primary">@Model.TotalInStock Unidades</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="shadow-sm border border-2 rounded-1 border-success p-2">
+                <div class="">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-arrow-in-down text-success me-2"></i>
+                        <div>
+                            <p class="text-muted fw-bold text-uppercase mb-0">Ingresos Este Mes</p>
+                            <p class="card-text fw-bold text-success">+@Model.EntriesThisMonth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="shadow-sm border border-2 rounded-1 border-danger p-2">
+                <div class="">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-arrow-up text-danger me-2"></i>
+                        <div>
+                            <p class=" fw-bold text-muted text-uppercase mb-0">Salidas/Baja Este Mes</p>
+                            <p class="card-text fw-bold text-danger">-@Model.DisposedThisMonth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="shadow-sm border border-2 rounded-1 border-info p-2">
+                <div class="">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-calendar-check  text-info me-2"></i>
+                        <div>
+                            <p class="fw-bold text-muted text-uppercase mb-0">Ingresos Mes Pasado</p>
+                            <p class="card-text fw-bold text-info">+@Model.EntriesLastMonth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-start mb-3">
+        <a asp-controller="Items" asp-action="Create" class="btn btn-success shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Agregar Nuevo Ítem
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre del Producto</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col" class="text-center">Stock Actual</th>
+                            <th scope="col">Última Modificación</th>
+                            <th scope="col" class="text-center">Estado</th>
+                            <th scope="col" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.Items)
+                        {
+                            <tr>
+                                <th scope="row">@item.Id</th>
+                                <td>@item.Name</td>
+                                <td>@item.Category</td>
+                                <td class="text-center">@item.Stock Unidades</td>
+                                <td>@item.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                                @* <td class="text-center"><span class="badge bg-success">Disponible</span></td> *@
+                                <td class="text-center">
+                                    @if(item.Stock < 5)
+                                    {
+                                        <span class="badge bg-warning text-dark">Bajo Stock</span>
+                                    }
+                                    else if(item.Stock == 0)
+                                    {
+                                        <span class="badge bg-danger">Agotado</span>
+                                    }
+                                    else if(item.DeleteAt is not null)
+                                    {
+                                        <span class="badge bg-danger">No Disponible</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Disponible</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-controller="Items" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-controller="Items" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                        @* <tr>
+                            <th scope="row">002</th>
+                            <td>Mouse Inalámbrico Ergo</td>
+                            <td>Accesorios</td>
+                            <td class="text-center">210</td>
+                            <td>28/11/2025</td>
+                            <td class="text-center"><span class="badge bg-success">Disponible</span></td>
+                            <td class="text-center">
+                                <a asp-controller="Items" asp-action="Edit" asp-route-id="1002" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="Items" asp-action="Delete" asp-route-id="1002" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">003</th>
+                            <td>Silla Oficina Pro-Max</td>
+                            <td>Mobiliario</td>
+                            <td class="text-center">5</td>
+                            <td>05/12/2025</td>
+                            <td class="text-center"><span class="badge bg-warning text-dark">Bajo Stock</span></td>
+                            <td class="text-center">
+                                <a asp-controller="Items" asp-action="Edit" asp-route-id="1003" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="Items" asp-action="Delete" asp-route-id="1003" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">005</th>
+                            <td>Router Wi-Fi 6 de Doble Banda</td>
+                            <td>Redes</td>
+                            <td class="text-center">80</td>
+                            <td>20/11/2025</td>
+                            <td class="text-center"><span class="badge bg-success">Disponible</span></td>
+                            <td class="text-center">
+                                <a asp-controller="Items" asp-action="Edit" asp-route-id="1005" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="Items" asp-action="Delete" asp-route-id="1005" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">007</th>
+                            <td>Impresora Multifunción Láser</td>
+                            <td>Oficina</td>
+                            <td class="text-center">3</td>
+                            <td>03/12/2025</td>
+                            <td class="text-center"><span class="badge bg-danger">Agotado</span></td>
+                            <td class="text-center">
+                                <a asp-controller="Items" asp-action="Edit" asp-route-id="1007" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="Items" asp-action="Delete" asp-route-id="1007" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">008</th>
+                            <td>Cable HDMI Premium 2m</td>
+                            <td>Conectividad</td>
+                            <td class="text-center">350</td>
+                            <td>15/10/2025</td>
+                            <td class="text-center"><span class="badge bg-success">Disponible</span></td>
+                            <td class="text-center">
+                                <a asp-controller="Items" asp-action="Edit" asp-route-id="1008" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="Items" asp-action="Delete" asp-route-id="1008" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">009</th>
+                            <td>Disco Duro SSD 1TB</td>
+                            <td>Almacenamiento</td>
+                            <td class="text-center">25</td>
+                            <td>08/12/2025</td>
+                            <td class="text-center"><span class="badge bg-success">Disponible</span></td>
+                            <td class="text-center">
+                                <a asp-controller="Items" asp-action="Edit" asp-route-id="1009" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="Items" asp-action="Delete" asp-route-id="1009" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td> 
+                        </tr> *@
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Navegación de Inventario" class="p-3 d-flex justify-content-center border-top">
+                <ul class="pagination mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+</div>
